@@ -1,0 +1,6 @@
+{
+    "first_run": "no",
+    "nasmnt": "/mnt/nas/",
+    "redmine_api_key_encrypted": "wofDj8KvwqrDiMOIw5FYwpfDm8OYwpvCgcKhw4vDncKKwqHDnsKtwprCmsORVMKSw5zDlcKaVcKcw4vDm8KGwqHDnMKsw4vDicKlUg==",
+    "secs_between_redmine_checks": 600
+}

@@ -1,0 +1,3 @@
+[submodule "pyaccessories"]
+	path = pyaccessories
+	url = https://github.com/devonpmack/pyaccessories.git

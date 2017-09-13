@@ -1,0 +1,14 @@
+2017-08-30 14:59:28,993 - INFO - [Elapsed time: 0.00] Would you like to set the redmine api key? (y/n)
+2017-08-30 14:59:30,581 - INFO - [Elapsed time: 1.59] Used Redmine API key from the json file.
+2017-08-30 14:59:30,582 - INFO - [Elapsed time: 1.59] Checking for requests matching Issue Status: New and Issue Title: snvphylslurm
+2017-08-30 14:59:30,982 - INFO - [Elapsed time: 1.99] Found 1 new issue(s)...
+2017-08-30 14:59:30,982 - INFO - [Elapsed time: 1.99] Found a request to run. Subject: snvphylslurm. ID: 9651
+2017-08-30 14:59:30,982 - INFO - [Elapsed time: 1.99] Adding to the list of responded to requests.
+2017-08-30 14:59:59,141 - INFO - [Elapsed time: 30.15] [Warning] The automation process had a problem, continuing redmine api anyways.
+2017-08-30 14:59:59,142 - INFO - [Elapsed time: 30.15] [Automation Error Dump]
+Traceback (most recent call last):
+  File "/home/lowa/PycharmProjects/SNVPhylSlurm/SNVPhylSlurm.py", line 100, in respond_to_issue
+    f = open('snvphyl.sh')
+FileNotFoundError: [Errno 2] No such file or directory: 'snvphyl.sh'
+
+2017-08-30 14:59:59,498 - INFO - [Elapsed time: 30.50] Waiting for the next check.

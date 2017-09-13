@@ -1,0 +1,14 @@
+2017-08-30 14:37:53,755 - INFO - [Elapsed time: 0.00] Would you like to set the redmine api key? (y/n)
+2017-08-30 14:37:55,338 - INFO - [Elapsed time: 1.58] Used Redmine API key from the json file.
+2017-08-30 14:37:55,339 - INFO - [Elapsed time: 1.58] Checking for requests matching Issue Status: New and Issue Title: snvphylslurm
+2017-08-30 14:37:55,543 - INFO - [Elapsed time: 1.79] Found 1 new issue(s)...
+2017-08-30 14:37:55,543 - INFO - [Elapsed time: 1.79] Found a request to run. Subject: snvphylslurm. ID: 9646
+2017-08-30 14:37:55,543 - INFO - [Elapsed time: 1.79] Adding to the list of responded to requests.
+2017-08-30 14:37:55,929 - INFO - [Elapsed time: 2.17] [Warning] The automation process had a problem, continuing redmine api anyways.
+2017-08-30 14:37:55,929 - INFO - [Elapsed time: 2.17] [Automation Error Dump]
+Traceback (most recent call last):
+  File "/home/lowa/PycharmProjects/SNVPhylSlurm/SNVPhylSlurm.py", line 77, in respond_to_issue
+    f = open(work_dir + '/seqid.txt', 'w')
+FileNotFoundError: [Errno 2] No such file or directory: 'mnt/nas/bio_requests/9646/seqid.txt'
+
+2017-08-30 14:37:56,319 - INFO - [Elapsed time: 2.56] Waiting for the next check.

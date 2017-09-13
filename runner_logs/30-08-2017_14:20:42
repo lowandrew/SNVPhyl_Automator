@@ -1,0 +1,5 @@
+2017-08-30 14:20:42,870 - INFO - [Elapsed time: 0.00] Would you like to set the redmine api key? (y/n)
+2017-08-30 14:20:44,664 - INFO - [Elapsed time: 1.79] Used Redmine API key from the json file.
+2017-08-30 14:20:44,665 - INFO - [Elapsed time: 1.80] Checking for requests matching Issue Status: Feedback and Issue Title: snvphylslurm
+2017-08-30 14:20:44,858 - INFO - [Elapsed time: 1.99] Found 0 new issue(s)...
+2017-08-30 14:20:44,859 - INFO - [Elapsed time: 1.99] Waiting for the next check.

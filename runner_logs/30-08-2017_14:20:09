@@ -1,0 +1,13 @@
+2017-08-30 14:20:09,102 - INFO - [Elapsed time: 0.00] Would you like to set the redmine api key? (y/n)
+2017-08-30 14:20:10,944 - INFO - [Elapsed time: 1.84] Used Redmine API key from the json file.
+2017-08-30 14:20:10,945 - INFO - [Elapsed time: 1.84] Checking for requests matching Issue Status: New and Issue Title: snvphylslurm
+2017-08-30 14:20:11,143 - INFO - [Elapsed time: 2.04] Found 1 new issue(s)...
+2017-08-30 14:20:11,143 - INFO - [Elapsed time: 2.04] Found a request to run. Subject: snvphylslurm. ID: 9644
+2017-08-30 14:20:11,144 - INFO - [Elapsed time: 2.04] Adding to the list of responded to requests.
+2017-08-30 14:20:11,685 - INFO - [Elapsed time: 2.58] Assigning the issue: 9644 back to the author.
+2017-08-30 14:20:11,888 - INFO - [Elapsed time: 2.79] 
+Message to author - your finishing message back to the author
+
+2017-08-30 14:20:11,888 - INFO - [Elapsed time: 2.79] Completed Response to issue 9644.
+2017-08-30 14:20:11,888 - INFO - [Elapsed time: 2.79] The next request will be processed once available
+2017-08-30 14:20:11,888 - INFO - [Elapsed time: 2.79] Waiting for the next check.
