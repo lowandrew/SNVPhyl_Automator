@@ -125,15 +125,17 @@ class Automate(object):
             else:
                 cpu_request = len(queries)
             # Cap the memory request at 192 gigs, since that's the memory we have available.
-            if len(queries) > 192:
-                mem_request = 192
+            if len(queries) > 19:
+                mem_request = 19
             else:
                 mem_request = len(queries)
             for line in lines:
-                if 'ntasks' in line:
+                if 'job_%j' in line:
+                    line = line.replace('job', 'biorequest_' + str(issue.id) + '_job')
+                elif 'ntasks' in line:
                     line = line.replace('14', str(cpu_request))
                 elif 'mem' in line:
-                    line = line.replace('40000', str(mem_request*1000))
+                    line = line.replace('40000', str(mem_request*10000))
                 f.write(line)
             # Glob the bio_request folder for fastas to use as reference, and take the first one.
             ref = glob.glob(work_dir + '/*.fasta')[0]
