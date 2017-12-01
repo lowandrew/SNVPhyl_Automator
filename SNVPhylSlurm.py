@@ -4,8 +4,21 @@ import os
 from RedmineAPI.Access import RedmineAccess
 from RedmineAPI.Configuration import Setup
 import glob
+from biotools import mash
 
 from Utilities import CustomKeys, CustomValues
+
+
+def check_distances(ref_fasta, fastq_folder):
+    bad_fastqs = list()
+    fastqs = glob.glob(os.path.join(fastq_folder, '*R1*'))
+    for fastq in fastqs:
+        mash.dist(fastq, ref_fasta)
+        mash_output = mash.read_mash_output('distances.tab')
+        print(mash_output[0].reference, mash_output[0].query, str(mash_output[0].distance))
+        if mash_output[0].distance > 0.06:  # May need to adjust this value.
+            bad_fastqs.append(mash_output[0].reference)
+    return bad_fastqs
 
 
 class Automate(object):
@@ -111,6 +124,19 @@ class Automate(object):
             os.chdir('/mnt/nas/External_MiSeq_Backup')
             cmd = 'python2 /mnt/nas/External_MiSeq_Backup/file_extractor.py {}/seqid.txt {} '.format(work_dir, work_dir + '/fastqs')
             os.system(cmd)
+            # Before we get going, do some MASHing to make sure that all the files are close to the reference.
+            # In the event that some files aren't, list them?
+            ref = glob.glob(work_dir + '/*.fasta')[0]
+            bad_fastqs = check_distances(ref, os.path.join(work_dir, 'fastqs'))
+            if bad_fastqs:
+                outstr = ''
+                for fastq in bad_fastqs:
+                    fastq = os.path.split(fastq)[-1].split('_')[0]
+                    outstr += fastq + '\n'
+                self.access_redmine.update_issue_to_author(issue, '\nWARNING: MASH screening suggests that the following'
+                                                                  ' samples may be too far from the reference. '
+                                                                  'You may want to create a new issue without them'
+                                                                  ' and try again. Samples: {}'.format(outstr))
             # Get back to where we were.
             os.chdir(current_dir)
             # Now set up the snvphyl batch script and submit it.
