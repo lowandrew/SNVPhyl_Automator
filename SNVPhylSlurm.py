@@ -13,7 +13,7 @@ def check_distances(ref_fasta, fastq_folder):
     bad_fastqs = list()
     fastqs = glob.glob(os.path.join(fastq_folder, '*R1*'))
     for fastq in fastqs:
-        mash.dist(fastq, ref_fasta)
+        mash.dist(fastq, ref_fasta, threads=5)
         mash_output = mash.read_mash_output('distances.tab')
         print(mash_output[0].reference, mash_output[0].query, str(mash_output[0].distance))
         if mash_output[0].distance > 0.06:  # May need to adjust this value.
