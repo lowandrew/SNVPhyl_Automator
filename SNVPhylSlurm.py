@@ -11,13 +11,14 @@ from Utilities import CustomKeys, CustomValues
 
 def check_distances(ref_fasta, fastq_folder):
     bad_fastqs = list()
-    fastqs = glob.glob(os.path.join(fastq_folder, '*R1*'))
-    for fastq in fastqs:
-        mash.dist(fastq, ref_fasta, threads=5)
-        mash_output = mash.read_mash_output('distances.tab')
-        print(mash_output[0].reference, mash_output[0].query, str(mash_output[0].distance))
-        if mash_output[0].distance > 0.06:  # May need to adjust this value.
-            bad_fastqs.append(mash_output[0].reference)
+    # fastqs = glob.glob(os.path.join(fastq_folder, '*R1*'))
+    mash.sketch(os.path.join(fastq_folder, '*R1*'), output_sketch='sketch.msh', threads=5)
+    mash.dist('sketch.msh', ref_fasta, threads=5)
+    mash_output = mash.read_mash_output('distances.tab')
+    for item in mash_output:
+        print(item.reference, item.query, str(item.distance))
+        if item.distance > 0.06:  # May need to adjust this value.
+            bad_fastqs.append(item.reference)
     return bad_fastqs
 
 
@@ -121,9 +122,9 @@ class Automate(object):
             os.chdir('/mnt/nas/MiSeq_Backup')
             cmd = 'python2 /mnt/nas/MiSeq_Backup/file_extractor.py {}/seqid.txt {} '.format(work_dir, work_dir + '/fastqs')
             os.system(cmd)
-            os.chdir('/mnt/nas/External_MiSeq_Backup')
-            cmd = 'python2 /mnt/nas/External_MiSeq_Backup/file_extractor.py {}/seqid.txt {} '.format(work_dir, work_dir + '/fastqs')
-            os.system(cmd)
+            # os.chdir('/mnt/nas/External_MiSeq_Backup')
+            # cmd = 'python2 /mnt/nas/External_MiSeq_Backup/file_extractor.py {}/seqid.txt {} '.format(work_dir, work_dir + '/fastqs')
+            # os.system(cmd)
             # Before we get going, do some MASHing to make sure that all the files are close to the reference.
             # In the event that some files aren't, list them?
             ref = glob.glob(work_dir + '/*.fasta')[0]
