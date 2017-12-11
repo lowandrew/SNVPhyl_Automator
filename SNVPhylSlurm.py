@@ -100,13 +100,13 @@ class Automate(object):
             issue.redmine_msg = ''
             ##########################################################################################
             # Make the bio_request folder
-            os.makedirs(os.path.join('/mnt/nas/bio_requests/', str(issue.id)))
+            os.makedirs(os.path.join('/mnt/nas/bio_requests', str(issue.id)))
             # Remember the directory we're in.
-            work_dir = os.path.join('/mnt/nas/bio_requests/', str(issue.id))
+            work_dir = os.path.join('/mnt/nas/bio_requests', str(issue.id))
             current_dir = os.getcwd()
             des = issue.description.split('\n')
             # Make our fastq directory.
-            os.makedirs(os.path.join(work_dir, '/fastqs'))
+            os.makedirs(os.path.join(work_dir, 'fastqs'))
             compare = False
             # Iterate through description to try to figure out reference/compare seqIDs.
             queries = list()
@@ -122,7 +122,7 @@ class Automate(object):
                     reference.append(item.replace('\r', ''))
             # Extract reference fasta. Should only be one, but if someone messes up and does more than one, the
             # first one that glob finds will be treated as the reference.
-            f = open(os.path.join(work_dir, '/seqid.txt'), 'w')
+            f = open(os.path.join(work_dir, 'seqid.txt'), 'w')
             for item in reference:
                 f.write(item + '\n')
             f.close()
@@ -130,7 +130,7 @@ class Automate(object):
             os.system(cmd)
             # Extract query fastqs. Need to do in both MiSeq Backup and External MiSeq Backup, as those scripts don't
             # look everywhere.
-            f = open(os.path.join(work_dir, '/seqid.txt'), 'w')
+            f = open(os.path.join(work_dir, 'seqid.txt'), 'w')
             for item in queries:
                 f.write(item + '\n')
             f.close()
@@ -174,6 +174,7 @@ class Automate(object):
                                                                   ' and try again. Samples: {}'.format(outstr))
             # Get back to where we were.
             os.chdir(current_dir)
+            print(current_dir)
             # Now set up the snvphyl batch script and submit it.
             f = open('snvphyl.sh')
             lines = f.readlines()
