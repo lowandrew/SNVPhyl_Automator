@@ -115,6 +115,7 @@ class Automate(object):
                 item = item.upper()
                 if 'COMPARE' in item:
                     compare = True
+                    continue
                 if compare:
                     queries.append(item.replace('\r', ''))
                 else:
