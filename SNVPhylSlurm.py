@@ -22,6 +22,19 @@ def check_distances(ref_fasta, fastq_folder):
     return bad_fastqs
 
 
+def verify_fastqs_present(query_list, fastq_folder):
+    missing_fastqs = list()
+    for query in query_list:
+        # Check that forward reads are present.
+        if len(glob.glob(fastq_folder + '/' + query + '*R1*fastq*')) == 0:
+            missing_fastqs.append(query)
+        # Check that reverse reads are present, and add to list if forward reads weren't missing
+        if len(glob.glob(fastq_folder + '/' + query + '*R2*fastq*')) == 0 and query not in missing_fastqs:
+            missing_fastqs.append(query)
+    # Returns list of SEQIDs for which we couldn't find forward and/or reverse reads
+    return missing_fastqs
+
+
 class Automate(object):
 
     def __init__(self, force):
@@ -84,15 +97,16 @@ class Automate(object):
             issue.redmine_msg = "Beginning the process for: %s" % issue.subject
             self.access_redmine.update_status_inprogress(issue, self.botmsg)
 
+            issue.redmine_msg = ''
             ##########################################################################################
             # Make the bio_request folder
-            os.makedirs('/mnt/nas/bio_requests/' + str(issue.id))
+            os.makedirs(os.path.join('/mnt/nas/bio_requests/', str(issue.id)))
             # Remember the directory we're in.
-            work_dir = '/mnt/nas/bio_requests/' + str(issue.id)
+            work_dir = os.path.join('/mnt/nas/bio_requests/', str(issue.id))
             current_dir = os.getcwd()
             des = issue.description.split('\n')
             # Make our fastq directory.
-            os.makedirs(work_dir + '/fastqs')
+            os.makedirs(os.path.join(work_dir, '/fastqs'))
             compare = False
             # Iterate through description to try to figure out reference/compare seqIDs.
             queries = list()
@@ -107,7 +121,7 @@ class Automate(object):
                     reference.append(item.replace('\r', ''))
             # Extract reference fasta. Should only be one, but if someone messes up and does more than one, the
             # first one that glob finds will be treated as the reference.
-            f = open(work_dir + '/seqid.txt', 'w')
+            f = open(os.path.join(work_dir, '/seqid.txt'), 'w')
             for item in reference:
                 f.write(item + '\n')
             f.close()
@@ -115,19 +129,38 @@ class Automate(object):
             os.system(cmd)
             # Extract query fastqs. Need to do in both MiSeq Backup and External MiSeq Backup, as those scripts don't
             # look everywhere.
-            f = open(work_dir + '/seqid.txt', 'w')
+            f = open(os.path.join(work_dir, '/seqid.txt'), 'w')
             for item in queries:
                 f.write(item + '\n')
             f.close()
             os.chdir('/mnt/nas/MiSeq_Backup')
             cmd = 'python2 /mnt/nas/MiSeq_Backup/file_extractor.py {}/seqid.txt {} '.format(work_dir, work_dir + '/fastqs')
             os.system(cmd)
-            # os.chdir('/mnt/nas/External_MiSeq_Backup')
-            # cmd = 'python2 /mnt/nas/External_MiSeq_Backup/file_extractor.py {}/seqid.txt {} '.format(work_dir, work_dir + '/fastqs')
-            # os.system(cmd)
+            # Check that we successfully extracted a reference file, and ERROR if we didn't.
+            if len(glob.glob(work_dir + '/*.fasta')) == 0:
+                self.access_redmine.update_issue_to_author(issue, '\nERROR: Could not find a reference FASTA to '
+                                                                  'run SNVPhyl with. Please verify that the reference '
+                                                                  'SEQID you have entered is valid, create a new '
+                                                                  'issue, and try again.')
+                shutil.rmtree(work_dir)
+                return
+            # Check that we didn't try to specify more than one reference file, and warn the user if we did.
+            ref = glob.glob(work_dir + '/*.fasta')[0]
+            if len(glob.glob(work_dir + '/*.fasta')) > 1:
+                self.access_redmine.update_issue_to_author(issue, '\nWARNING: More than one reference FASTA found.'
+                                                                  ' Proceeding with {} as the reference '
+                                                                  'FASTA.'.format(ref))
+            # Check that no FASTQ files specifed in the COMPARE section are missing.
+            missing_fastqs = verify_fastqs_present(queries, os.path.join(work_dir, 'fastqs'))
+            if len(missing_fastqs) > 0:
+                self.access_redmine.update_issue_to_author(issue, '\nERROR: The following FASTQ files specified'
+                                                                  ' were not able to be found: {}\nPlease verify that'
+                                                                  ' they are valid SEQIDs, create a new issue, and'
+                                                                  ' try again.'.format(str(missing_fastqs)))
+                shutil.rmtree(work_dir)
+                return
             # Before we get going, do some MASHing to make sure that all the files are close to the reference.
             # In the event that some files aren't, list them?
-            ref = glob.glob(work_dir + '/*.fasta')[0]
             bad_fastqs = check_distances(ref, os.path.join(work_dir, 'fastqs'))
             if bad_fastqs:
                 outstr = ''
